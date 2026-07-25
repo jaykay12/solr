@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package java.org.apache.solr.cli;
+package org.apache.solr.cli;
 
 import static org.apache.solr.cli.SolrCLI.findTool;
 import static org.apache.solr.cli.SolrCLI.parseCmdLine;

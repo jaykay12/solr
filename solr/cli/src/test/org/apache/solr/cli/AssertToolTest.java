@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package java.org.apache.solr.cli;
+package org.apache.solr.cli;
 
 import java.nio.file.Files;
 import java.nio.file.Path;

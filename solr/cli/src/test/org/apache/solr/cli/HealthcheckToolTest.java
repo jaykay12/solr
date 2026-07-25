@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package java.org.apache.solr.cli;
+package org.apache.solr.cli;
 
 import java.util.Set;
 import org.apache.solr.client.solrj.impl.CloudSolrClient;
