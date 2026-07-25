@@ -21,6 +21,7 @@ import java.net.URISyntaxException;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.cloud.SolrCloudTestCase;
 import org.apache.solr.common.SolrException;
+import org.junit.Assert;
 import org.junit.Test;
 
 public class CLIUtilsTest extends SolrCloudTestCase {

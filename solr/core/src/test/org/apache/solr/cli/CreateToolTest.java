@@ -17,6 +17,7 @@
 
 package org.apache.solr.cli;
 
+import org.apache.solr.SolrTestCaseJ4;
 import org.apache.solr.cloud.SolrCloudTestCase;
 import org.apache.solr.util.SecurityJson;
 import org.junit.BeforeClass;
@@ -50,6 +51,6 @@ public class CreateToolTest extends SolrCloudTestCase {
       "--verbose"
     };
 
-    Assert.assertEquals(0, CLITestHelper.runTool(args, CreateTool.class));
+    assertEquals(0, CLITestHelper.runTool(args, CreateTool.class));
   }
 }
