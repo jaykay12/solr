@@ -34,7 +34,7 @@ public class PostLogsToolTest extends SolrTestCaseJ4 {
 
   @BeforeClass
   public static void beforeClass() {
-    solr9Format = LuceneTestCase.random().nextBoolean();
+    solr9Format = random().nextBoolean();
   }
 
   private String sometimesSolr9Format(String record) {
@@ -48,7 +48,7 @@ public class PostLogsToolTest extends SolrTestCaseJ4 {
         sometimesSolr9Format(
             "2019-12-09 15:05:11.931 INFO  (qtp2103763750-21) [c:logs4 s:shard1 r:core_node2 x:logs4_shard1_replica_n1] o.a.s.c.S.Request [logs4_shard1_replica_n1]  path=/select params={q=*:*&_=1575835181759&shards.purpose=36&isShard=true&wt=javabin&distrib=false} hits=234868 status=0 QTime=8\n");
     List<SolrInputDocument> docs = readDocs(record);
-    Assert.assertEquals(docs.size(), 1);
+    assertEquals(docs.size(), 1);
     SolrInputDocument doc = docs.get(0);
 
     SolrInputField query = doc.getField("q_s");
@@ -71,25 +71,25 @@ public class PostLogsToolTest extends SolrTestCaseJ4 {
     SolrInputField purpose = doc.getField("purpose_ss");
     Object[] purposes = purpose.getValues().toArray();
 
-    Assert.assertEquals(query.getValue(), "*:*");
-    Assert.assertEquals(date.getValue(), "2019-12-09T15:05:11.931Z");
-    Assert.assertEquals(time_minute.getValue(), "2019-12-09T15:05:00Z");
-    Assert.assertEquals(time_ten_second.getValue(), "2019-12-09T15:05:10Z");
-    Assert.assertEquals(collection.getValue(), "logs4");
-    Assert.assertEquals(path.getValue(), "/select");
-    Assert.assertEquals(hits.getValue(), "234868");
-    Assert.assertEquals(type.getValue(), "query");
-    Assert.assertEquals(status.getValue(), "0");
-    Assert.assertEquals(shard.getValue(), "shard1");
-    Assert.assertEquals(replica.getValue(), "core_node2");
-    Assert.assertEquals(core.getValue(), "logs4_shard1_replica_n1");
-    Assert.assertEquals(wt.getValue(), "javabin");
-    Assert.assertEquals(distrib.getValue(), "false");
-    Assert.assertEquals(isShard.getValue(), "true");
-    Assert.assertEquals(ids.getValue(), "false");
-    Assert.assertEquals(shards.getValue(), "false");
-    Assert.assertEquals("GET_TOP_IDS", purposes[0].toString());
-    Assert.assertEquals("REFINE_FACETS", purposes[1].toString());
+    assertEquals(query.getValue(), "*:*");
+    assertEquals(date.getValue(), "2019-12-09T15:05:11.931Z");
+    assertEquals(time_minute.getValue(), "2019-12-09T15:05:00Z");
+    assertEquals(time_ten_second.getValue(), "2019-12-09T15:05:10Z");
+    assertEquals(collection.getValue(), "logs4");
+    assertEquals(path.getValue(), "/select");
+    assertEquals(hits.getValue(), "234868");
+    assertEquals(type.getValue(), "query");
+    assertEquals(status.getValue(), "0");
+    assertEquals(shard.getValue(), "shard1");
+    assertEquals(replica.getValue(), "core_node2");
+    assertEquals(core.getValue(), "logs4_shard1_replica_n1");
+    assertEquals(wt.getValue(), "javabin");
+    assertEquals(distrib.getValue(), "false");
+    assertEquals(isShard.getValue(), "true");
+    assertEquals(ids.getValue(), "false");
+    assertEquals(shards.getValue(), "false");
+    assertEquals("GET_TOP_IDS", purposes[0].toString());
+    assertEquals("REFINE_FACETS", purposes[1].toString());
   }
 
   // Requests which have multiple copies of the same param should be parsed so that the first param
@@ -102,14 +102,14 @@ public class PostLogsToolTest extends SolrTestCaseJ4 {
             "2019-12-09 15:05:01.931 INFO  (qtp2103763750-21) [c:logs4 s:shard1 r:core_node2 x:logs4_shard1_replica_n1] o.a.s.c.S.Request [logs4_shard1_replica_n1]  path=/select params={q=*:*&q=inStock:true&_=1575835181759&shards.purpose=36&isShard=true&wt=javabin&wt=xml&distrib=false} hits=234868 status=0 QTime=8\n");
 
     List<SolrInputDocument> docs = readDocs(record);
-    Assert.assertEquals(docs.size(), 1);
+    assertEquals(docs.size(), 1);
     SolrInputDocument doc = docs.get(0);
 
-    Assert.assertEquals(doc.getFieldValues("q_s").size(), 1);
-    Assert.assertEquals(doc.getFieldValue("q_s"), "*:*");
+    assertEquals(doc.getFieldValues("q_s").size(), 1);
+    assertEquals(doc.getFieldValue("q_s"), "*:*");
 
-    Assert.assertEquals(doc.getFieldValues("wt_s").size(), 1);
-    Assert.assertEquals(doc.getFieldValue("wt_s"), "javabin");
+    assertEquals(doc.getFieldValues("wt_s").size(), 1);
+    assertEquals(doc.getFieldValue("wt_s"), "javabin");
   }
 
   @Test
@@ -119,20 +119,20 @@ public class PostLogsToolTest extends SolrTestCaseJ4 {
             "2020-03-19 20:00:30.845 INFO  (qtp1635378213-20354) [c:logs4 s:shard8 r:core_node63 x:logs4_shard8_replica_n60] o.a.s.c.S.Request [logs4_shard8_replica_n60]  path=/get params={qt=/get&_stateVer_=logs4:104&ids=id1&ids=id2&ids=id3&wt=javabin} status=0 QTime=61");
 
     List<SolrInputDocument> docs = readDocs(record);
-    Assert.assertEquals(docs.size(), 1);
+    assertEquals(docs.size(), 1);
     SolrInputDocument doc = docs.get(0);
 
-    Assert.assertEquals(doc.getField("type_s").getValue(), "get");
-    Assert.assertEquals(doc.getField("date_dt").getValue(), "2020-03-19T20:00:30.845Z");
-    Assert.assertEquals(doc.getField("collection_s").getValue(), "logs4");
-    Assert.assertEquals(doc.getField("path_s").getValue(), "/get");
-    Assert.assertEquals(doc.getField("status_s").getValue(), "0");
-    Assert.assertEquals(doc.getField("shard_s").getValue(), "shard8");
-    Assert.assertEquals(doc.getField("replica_s").getValue(), "core_node63");
-    Assert.assertEquals(doc.getField("core_s").getValue(), "logs4_shard8_replica_n60");
-    Assert.assertEquals(doc.getField("wt_s").getValue(), "javabin");
-    Assert.assertEquals(doc.getField("distrib_s").getValue(), "true");
-    Assert.assertEquals(doc.getField("ids_s").getValue(), "false");
+    assertEquals(doc.getField("type_s").getValue(), "get");
+    assertEquals(doc.getField("date_dt").getValue(), "2020-03-19T20:00:30.845Z");
+    assertEquals(doc.getField("collection_s").getValue(), "logs4");
+    assertEquals(doc.getField("path_s").getValue(), "/get");
+    assertEquals(doc.getField("status_s").getValue(), "0");
+    assertEquals(doc.getField("shard_s").getValue(), "shard8");
+    assertEquals(doc.getField("replica_s").getValue(), "core_node63");
+    assertEquals(doc.getField("core_s").getValue(), "logs4_shard8_replica_n60");
+    assertEquals(doc.getField("wt_s").getValue(), "javabin");
+    assertEquals(doc.getField("distrib_s").getValue(), "true");
+    assertEquals(doc.getField("ids_s").getValue(), "false");
   }
 
   @Test
@@ -142,26 +142,26 @@ public class PostLogsToolTest extends SolrTestCaseJ4 {
             "2019-12-25 20:38:23.498 INFO  (qtp2103763750-126) [c:logs3 s:shard1 r:core_node2 x:logs3_shard1_replica_n1] o.a.s.u.p.LogUpdateProcessorFactory [logs3_shard1_replica_n1]  path=/update params={commitWithin=1000&overwrite=true&wt=json&_=1577306114481}{deleteByQuery=*:* (-1653925534487281664)} 0 11\n"
                 + "2019-12-25 20:42:13.411 INFO  (qtp2103763750-303) [c:logs5 s:shard1 r:core_node2 x:logs5_shard1_replica_n1] o.a.s.u.p.LogUpdateProcessorFactory [logs5_shard1_replica_n1]  path=/update params={commitWithin=1000&overwrite=true&wt=json&_=1577306114481}{delete=[03bbe975-728a-4df8-aa25-fe25049dc0ef (-1653925775577972736)]} 0 1\n");
     List<SolrInputDocument> docs = readDocs(record);
-    Assert.assertEquals(docs.size(), 2);
+    assertEquals(docs.size(), 2);
     SolrInputDocument doc = docs.get(0);
     SolrInputField date = doc.getField("date_dt");
     SolrInputField type = doc.getField("type_s");
     SolrInputField core = doc.getField("core_s");
     SolrInputField collection = doc.getField("collection_s");
-    Assert.assertEquals(date.getValue(), "2019-12-25T20:38:23.498Z");
-    Assert.assertEquals(type.getValue(), "deleteByQuery");
-    Assert.assertEquals(collection.getValue(), "logs3");
-    Assert.assertEquals(core.getValue(), "logs3_shard1_replica_n1");
+    assertEquals(date.getValue(), "2019-12-25T20:38:23.498Z");
+    assertEquals(type.getValue(), "deleteByQuery");
+    assertEquals(collection.getValue(), "logs3");
+    assertEquals(core.getValue(), "logs3_shard1_replica_n1");
 
     SolrInputDocument doc1 = docs.get(1);
     SolrInputField date1 = doc1.getField("date_dt");
     SolrInputField type1 = doc1.getField("type_s");
     SolrInputField core1 = doc1.getField("core_s");
     SolrInputField collection1 = doc1.getField("collection_s");
-    Assert.assertEquals(date1.getValue(), "2019-12-25T20:42:13.411Z");
-    Assert.assertEquals(type1.getValue(), "delete");
-    Assert.assertEquals(collection1.getValue(), "logs5");
-    Assert.assertEquals(core1.getValue(), "logs5_shard1_replica_n1");
+    assertEquals(date1.getValue(), "2019-12-25T20:42:13.411Z");
+    assertEquals(type1.getValue(), "delete");
+    assertEquals(collection1.getValue(), "logs5");
+    assertEquals(core1.getValue(), "logs5_shard1_replica_n1");
   }
 
   @Test
@@ -240,7 +240,7 @@ public class PostLogsToolTest extends SolrTestCaseJ4 {
             + "\n"
             + "2019-12-09 15:05:01.931 INFO  (qtp2103763750-21) [c:logs4 s:shard1 r:core_node2 x:logs4_shard1_replica_n1] o.a.s.c.S.Request [logs4_shard1_replica_n1]  path=/select params={q=*:*&_=1575835181759&isShard=true&wt=javabin&distrib=false} hits=234868 status=0 QTime=8\n";
     List<SolrInputDocument> docs = readDocs(record);
-    Assert.assertEquals(docs.size(), 2);
+    assertEquals(docs.size(), 2);
     SolrInputDocument doc = docs.get(0);
     SolrInputField date = doc.getField("date_dt");
     SolrInputField type = doc.getField("type_s");
@@ -251,20 +251,20 @@ public class PostLogsToolTest extends SolrTestCaseJ4 {
     SolrInputField root = doc.getField("root_cause_t");
     SolrInputField collection = doc.getField("collection_s");
 
-    Assert.assertEquals(date.getValue(), "2019-12-31T01:49:53.251Z");
-    Assert.assertEquals(type.getValue(), "error");
-    Assert.assertEquals(collection.getValue(), "logs6");
+    assertEquals(date.getValue(), "2019-12-31T01:49:53.251Z");
+    assertEquals(type.getValue(), "error");
+    assertEquals(collection.getValue(), "logs6");
 
-    Assert.assertEquals(shard.getValue(), "shard1");
-    Assert.assertEquals(replica.getValue(), "core_node2");
-    Assert.assertEquals(core.getValue(), "logs6_shard1_replica_n1");
-    Assert.assertTrue(stack.getValue().toString().contains(root.getValue().toString()));
+    assertEquals(shard.getValue(), "shard1");
+    assertEquals(replica.getValue(), "core_node2");
+    assertEquals(core.getValue(), "logs6_shard1_replica_n1");
+    assertTrue(stack.getValue().toString().contains(root.getValue().toString()));
 
     SolrInputDocument doc1 = docs.get(1);
     SolrInputField date1 = doc1.getField("date_dt");
     SolrInputField type1 = doc1.getField("type_s");
-    Assert.assertEquals(date1.getValue(), "2019-12-09T15:05:01.931Z");
-    Assert.assertEquals(type1.getValue(), "query");
+    assertEquals(date1.getValue(), "2019-12-09T15:05:01.931Z");
+    assertEquals(type1.getValue(), "query");
   }
 
   @Test
@@ -272,7 +272,7 @@ public class PostLogsToolTest extends SolrTestCaseJ4 {
     String record =
         "2021-10-08 16:42:10.636 INFO  (qtp1080476785-26) [c:collection1 s:shard1 r:core_node2 x:collection1_shard1_replica_n1] o.a.s.u.p.LogUpdateProcessorFactory [collection1_shard1_replica_n1]  path=/update params={waitSearcher=true&commit=true&softCommit=false&wt=javabin}{commit=} 0 152";
     List<SolrInputDocument> docs = readDocs(record);
-    Assert.assertEquals(docs.size(), 1);
+    assertEquals(docs.size(), 1);
     SolrInputDocument doc = docs.get(0);
     SolrInputField date = doc.getField("date_dt");
     SolrInputField type = doc.getField("type_s");
@@ -280,12 +280,12 @@ public class PostLogsToolTest extends SolrTestCaseJ4 {
     SolrInputField replica = doc.getField("replica_s");
     SolrInputField core = doc.getField("core_s");
     SolrInputField collection = doc.getField("collection_s");
-    Assert.assertEquals(date.getValue(), "2021-10-08T16:42:10.636Z");
-    Assert.assertEquals(type.getValue(), "commit");
-    Assert.assertEquals(shard.getValue(), "shard1");
-    Assert.assertEquals(replica.getValue(), "core_node2");
-    Assert.assertEquals(core.getValue(), "collection1_shard1_replica_n1");
-    Assert.assertEquals(collection.getValue(), "collection1");
+    assertEquals(date.getValue(), "2021-10-08T16:42:10.636Z");
+    assertEquals(type.getValue(), "commit");
+    assertEquals(shard.getValue(), "shard1");
+    assertEquals(replica.getValue(), "core_node2");
+    assertEquals(core.getValue(), "collection1_shard1_replica_n1");
+    assertEquals(collection.getValue(), "collection1");
   }
 
   @Test
@@ -295,18 +295,18 @@ public class PostLogsToolTest extends SolrTestCaseJ4 {
             "2022-01-25 20:01:15.903 INFO  (searcherExecutor-19-thread-1-processing-localhost:8983_solr test_shard1_replica_n1 test shard1 core_node2) [c:test s:shard1 r:core_node2 x:test_shard1_replica_n1] o.a.s.c.SolrCore Registered new searcher autowarm time: 0 ms");
 
     List<SolrInputDocument> docs = readDocs(record);
-    Assert.assertEquals(docs.size(), 1);
+    assertEquals(docs.size(), 1);
     SolrInputDocument doc = docs.get(0);
     SolrInputField date = doc.getField("date_dt");
     SolrInputField type = doc.getField("type_s");
     SolrInputField core = doc.getField("core_s");
     SolrInputField replica = doc.getField("replica_s");
     SolrInputField collection = doc.getField("collection_s");
-    Assert.assertEquals(date.getValue(), "2022-01-25T20:01:15.903Z");
-    Assert.assertEquals(type.getValue(), "newSearcher");
-    Assert.assertEquals(core.getValue(), "test_shard1_replica_n1");
-    Assert.assertEquals(replica.getValue(), "core_node2");
-    Assert.assertEquals(collection.getValue(), "test");
+    assertEquals(date.getValue(), "2022-01-25T20:01:15.903Z");
+    assertEquals(type.getValue(), "newSearcher");
+    assertEquals(core.getValue(), "test_shard1_replica_n1");
+    assertEquals(replica.getValue(), "core_node2");
+    assertEquals(collection.getValue(), "test");
   }
 
   // Ensure PostLogsTool parses _all_ log lines into searchable records
@@ -315,14 +315,14 @@ public class PostLogsToolTest extends SolrTestCaseJ4 {
     final String record =
         "2020-06-11 11:59:08.386 INFO  (main) [   ] o.a.s.c.c.ZkStateReader Updated live nodes from ZooKeeper... (0) -> (2)";
     final List<SolrInputDocument> docs = readDocs(record);
-    Assert.assertEquals(docs.size(), 1);
+    assertEquals(docs.size(), 1);
 
     SolrInputDocument doc = docs.get(0);
     final Collection<String> fields = doc.getFieldNames();
-    Assert.assertEquals(5, fields.size());
-    Assert.assertEquals("2020-06-11T11:59:08.386Z", doc.getField("date_dt").getValue());
-    Assert.assertEquals("other", doc.getField("type_s").getValue());
-    Assert.assertEquals(record, doc.getField("line_t").getValue());
+    assertEquals(5, fields.size());
+    assertEquals("2020-06-11T11:59:08.386Z", doc.getField("date_dt").getValue());
+    assertEquals("other", doc.getField("type_s").getValue());
+    assertEquals(record, doc.getField("line_t").getValue());
   }
 
   private List<SolrInputDocument> readDocs(String records) throws Exception {

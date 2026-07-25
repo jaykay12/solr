@@ -21,7 +21,6 @@ import java.net.URISyntaxException;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.cloud.SolrCloudTestCase;
 import org.apache.solr.common.SolrException;
-import org.junit.Assert;
 import org.junit.Test;
 
 public class CLIUtilsTest extends SolrCloudTestCase {
@@ -52,12 +51,12 @@ public class CLIUtilsTest extends SolrCloudTestCase {
   public void testCommunicationErrors() {
     // communication errors
     Exception serverException = new Exception(new SolrServerException(""));
-    Assert.assertTrue(
+    assertTrue(
         "SolrServerException should be communication error",
         CLIUtils.checkCommunicationError(serverException));
 
     Exception socketException = new RuntimeException(new Exception(new SocketException()));
-    Assert.assertTrue(
+    assertTrue(
         "SocketException should be communication error",
         CLIUtils.checkCommunicationError(socketException));
 
@@ -68,18 +67,18 @@ public class CLIUtilsTest extends SolrCloudTestCase {
     //        CLIUtils.checkCommunicationError(parentException));
 
     Exception rootException = new SolrServerException("");
-    Assert.assertTrue(
+    assertTrue(
         "SolrServerException with no cause should be communication error",
         CLIUtils.checkCommunicationError(rootException));
 
     // non-communication errors
     Exception exception1 = new NullPointerException();
-    Assert.assertFalse(
+    assertFalse(
         "NullPointerException should not be communication error",
         CLIUtils.checkCommunicationError(exception1));
 
     Exception exception2 = new RuntimeException(new Exception());
-    Assert.assertFalse(
+    assertFalse(
         "Exception should not be communication error",
         CLIUtils.checkCommunicationError(exception2));
   }
@@ -87,11 +86,11 @@ public class CLIUtilsTest extends SolrCloudTestCase {
   @Test
   public void testCodeForAuthError() throws SolrException {
     // auth errors
-    Assert.assertThrows(
+    assertThrows(
         "Forbidden (403) should throw SolrException",
         SolrException.class,
         () -> CLIUtils.checkCodeForAuthError(SolrException.ErrorCode.FORBIDDEN.code));
-    Assert.assertThrows(
+    assertThrows(
         "Unauthorized (401) should throw SolrException",
         SolrException.class,
         () -> CLIUtils.checkCodeForAuthError(SolrException.ErrorCode.UNAUTHORIZED.code));
@@ -133,7 +132,7 @@ public class CLIUtilsTest extends SolrCloudTestCase {
         "Should extract implicit HTTPS port (443)", 443, CLIUtils.portFromUrl("https://localhost"));
 
     // TODO See if we could be more lenient and fallback to defaults instead.
-    Assert.assertThrows(
+    assertThrows(
         "Should throw NullpointerException if no scheme provided",
         NullPointerException.class,
         () -> CLIUtils.portFromUrl("localhost"));

@@ -17,7 +17,6 @@
 
 package org.apache.solr.cli;
 
-import org.apache.solr.SolrTestCaseJ4;
 import org.apache.solr.cloud.SolrCloudTestCase;
 import org.apache.solr.util.SecurityJson;
 import org.junit.BeforeClass;
@@ -29,8 +28,8 @@ public class CreateToolTest extends SolrCloudTestCase {
 
   @BeforeClass
   public static void setupClusterWithSecurityEnabled() throws Exception {
-    SolrCloudTestCase.configureCluster(2)
-        .addConfig("conf", SolrTestCaseJ4.configset("cloud-minimal"))
+    configureCluster(2)
+        .addConfig("conf", configset("cloud-minimal"))
         .withSecurityJson(SecurityJson.SIMPLE)
         .configure();
   }
@@ -45,7 +44,7 @@ public class CreateToolTest extends SolrCloudTestCase {
       "-n",
       "cloud-minimal",
       "-z",
-      SolrCloudTestCase.cluster.getZkClient().getZkServerAddress(),
+      cluster.getZkClient().getZkServerAddress(),
       "--credentials",
       SecurityJson.USER_PASS,
       "--verbose"

@@ -27,7 +27,6 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.lang.invoke.MethodHandles;
 import org.apache.commons.cli.CommandLine;
-import org.junit.Assert;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -105,7 +104,7 @@ public class CLITestHelper {
 
     public void clearOutput() {
       if (printer == null) {
-        Assert.fail("TestingRuntime was created without capturing output");
+        fail("TestingRuntime was created without capturing output");
       }
 
       printer.flush();
@@ -115,7 +114,7 @@ public class CLITestHelper {
 
     public String getOutput() {
       if (printer == null) {
-        Assert.fail("TestingRuntime was created without capturing output");
+        fail("TestingRuntime was created without capturing output");
       }
 
       printer.flush();
@@ -125,7 +124,7 @@ public class CLITestHelper {
 
     public Reader getReader() {
       if (printer == null) {
-        Assert.fail("TestingRuntime was created without capturing output");
+        fail("TestingRuntime was created without capturing output");
       }
 
       assert writer != null;

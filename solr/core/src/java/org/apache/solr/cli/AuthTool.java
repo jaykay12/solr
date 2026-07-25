@@ -268,7 +268,7 @@ public class AuthTool extends ToolBase {
             echoIfVerbose("Uploading following security.json: " + securityJson);
             try (SolrZkClient zkClient = CLIUtils.getSolrZkClient(cli, zkHost)) {
               zkClient.makePath(
-                      "/security.json", securityJson.getBytes(StandardCharsets.UTF_8), false);
+                  "/security.json", securityJson.getBytes(StandardCharsets.UTF_8), false);
             }
           }
 

@@ -21,7 +21,6 @@ import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.Locale;
 import org.apache.lucene.tests.util.TestUtil;
-import org.apache.solr.SolrTestCaseJ4;
 import org.apache.solr.client.solrj.request.AbstractUpdateRequest;
 import org.apache.solr.client.solrj.request.CollectionAdminRequest;
 import org.apache.solr.client.solrj.request.UpdateRequest;
@@ -35,9 +34,9 @@ public class ApiToolTest extends SolrCloudTestCase {
 
   @BeforeClass
   public static void setupCluster() throws Exception {
-    SolrCloudTestCase.configureCluster(1)
+    configureCluster(1)
         .addConfig(
-            "config", SolrTestCaseJ4.TEST_PATH().resolve("configsets").resolve("cloud-minimal").resolve("conf"))
+            "config", TEST_PATH().resolve("configsets").resolve("cloud-minimal").resolve("conf"))
         .configure();
   }
 
@@ -54,8 +53,8 @@ public class ApiToolTest extends SolrCloudTestCase {
 
       URI uri = new URI(url);
       ModifiableSolrParams params = ApiTool.getSolrParamsFromUri(uri);
-      Assert.assertEquals(1, params.size());
-      Assert.assertEquals("select id from COLL_NAME limit 10", params.get("stmt"));
+      assertEquals(1, params.size());
+      assertEquals("select id from COLL_NAME limit 10", params.get("stmt"));
     }
   }
 
@@ -63,8 +62,8 @@ public class ApiToolTest extends SolrCloudTestCase {
   public void testQueryResponse() throws Exception {
     int docCount = 1000;
     CollectionAdminRequest.createCollection(COLLECTION_NAME, "config", 2, 1)
-        .process(SolrCloudTestCase.cluster.getSolrClient());
-    SolrCloudTestCase.cluster.waitForActiveCollection(COLLECTION_NAME, 2, 2);
+        .process(cluster.getSolrClient());
+    cluster.waitForActiveCollection(COLLECTION_NAME, 2, 2);
 
     UpdateRequest ur = new UpdateRequest();
     ur.setAction(AbstractUpdateRequest.ACTION.COMMIT, true, true);
@@ -74,18 +73,18 @@ public class ApiToolTest extends SolrCloudTestCase {
           "id",
           String.valueOf(i),
           "desc_s",
-          TestUtil.randomSimpleString(LuceneTestCase.random(), 10, 50),
+          TestUtil.randomSimpleString(random(), 10, 50),
           "a_dt",
           "2019-09-30T05:58:03Z");
     }
-    SolrCloudTestCase.cluster.getSolrClient().request(ur, COLLECTION_NAME);
+    cluster.getSolrClient().request(ur, COLLECTION_NAME);
 
     ToolRuntime runtime = new CLITestHelper.TestingRuntime(false);
     ApiTool tool = new ApiTool(runtime);
 
     String response =
         tool.callGet(
-            SolrCloudTestCase.cluster.getJettySolrRunner(0).getBaseUrl()
+            cluster.getJettySolrRunner(0).getBaseUrl()
                 + "/"
                 + COLLECTION_NAME
                 + "/select?q=*:*&rows=1&fl=id&sort=id+asc",
@@ -97,7 +96,7 @@ public class ApiToolTest extends SolrCloudTestCase {
   }
 
   private void assertFindInJson(String json, String find) {
-    Assert.assertTrue(
+    assertTrue(
         String.format(Locale.ROOT, "Could not find string %s in response: \n%s", find, json),
         json.contains(find));
   }
