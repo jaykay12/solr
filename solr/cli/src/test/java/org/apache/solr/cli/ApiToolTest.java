@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.solr.cli;
+package java.org.apache.solr.cli;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -34,9 +34,9 @@ public class ApiToolTest extends SolrCloudTestCase {
 
   @BeforeClass
   public static void setupCluster() throws Exception {
-    configureCluster(1)
+    SolrCloudTestCase.configureCluster(1)
         .addConfig(
-            "config", TEST_PATH().resolve("configsets").resolve("cloud-minimal").resolve("conf"))
+            "config", SolrTestCaseJ4.TEST_PATH().resolve("configsets").resolve("cloud-minimal").resolve("conf"))
         .configure();
   }
 
@@ -53,8 +53,8 @@ public class ApiToolTest extends SolrCloudTestCase {
 
       URI uri = new URI(url);
       ModifiableSolrParams params = ApiTool.getSolrParamsFromUri(uri);
-      assertEquals(1, params.size());
-      assertEquals("select id from COLL_NAME limit 10", params.get("stmt"));
+      Assert.assertEquals(1, params.size());
+      Assert.assertEquals("select id from COLL_NAME limit 10", params.get("stmt"));
     }
   }
 
@@ -62,8 +62,8 @@ public class ApiToolTest extends SolrCloudTestCase {
   public void testQueryResponse() throws Exception {
     int docCount = 1000;
     CollectionAdminRequest.createCollection(COLLECTION_NAME, "config", 2, 1)
-        .process(cluster.getSolrClient());
-    cluster.waitForActiveCollection(COLLECTION_NAME, 2, 2);
+        .process(SolrCloudTestCase.cluster.getSolrClient());
+    SolrCloudTestCase.cluster.waitForActiveCollection(COLLECTION_NAME, 2, 2);
 
     UpdateRequest ur = new UpdateRequest();
     ur.setAction(AbstractUpdateRequest.ACTION.COMMIT, true, true);
@@ -73,18 +73,18 @@ public class ApiToolTest extends SolrCloudTestCase {
           "id",
           String.valueOf(i),
           "desc_s",
-          TestUtil.randomSimpleString(random(), 10, 50),
+          TestUtil.randomSimpleString(LuceneTestCase.random(), 10, 50),
           "a_dt",
           "2019-09-30T05:58:03Z");
     }
-    cluster.getSolrClient().request(ur, COLLECTION_NAME);
+    SolrCloudTestCase.cluster.getSolrClient().request(ur, COLLECTION_NAME);
 
     ToolRuntime runtime = new CLITestHelper.TestingRuntime(false);
     ApiTool tool = new ApiTool(runtime);
 
     String response =
         tool.callGet(
-            cluster.getJettySolrRunner(0).getBaseUrl()
+            SolrCloudTestCase.cluster.getJettySolrRunner(0).getBaseUrl()
                 + "/"
                 + COLLECTION_NAME
                 + "/select?q=*:*&rows=1&fl=id&sort=id+asc",
@@ -96,7 +96,7 @@ public class ApiToolTest extends SolrCloudTestCase {
   }
 
   private void assertFindInJson(String json, String find) {
-    assertTrue(
+    Assert.assertTrue(
         String.format(Locale.ROOT, "Could not find string %s in response: \n%s", find, json),
         json.contains(find));
   }

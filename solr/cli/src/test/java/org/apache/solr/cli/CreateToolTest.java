@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.solr.cli;
+package java.org.apache.solr.cli;
 
 import org.apache.solr.cloud.SolrCloudTestCase;
 import org.apache.solr.util.SecurityJson;
@@ -28,8 +28,8 @@ public class CreateToolTest extends SolrCloudTestCase {
 
   @BeforeClass
   public static void setupClusterWithSecurityEnabled() throws Exception {
-    configureCluster(2)
-        .addConfig("conf", configset("cloud-minimal"))
+    SolrCloudTestCase.configureCluster(2)
+        .addConfig("conf", SolrTestCaseJ4.configset("cloud-minimal"))
         .withSecurityJson(SecurityJson.SIMPLE)
         .configure();
   }
@@ -44,12 +44,12 @@ public class CreateToolTest extends SolrCloudTestCase {
       "-n",
       "cloud-minimal",
       "-z",
-      cluster.getZkClient().getZkServerAddress(),
+      SolrCloudTestCase.cluster.getZkClient().getZkServerAddress(),
       "--credentials",
       SecurityJson.USER_PASS,
       "--verbose"
     };
 
-    assertEquals(0, CLITestHelper.runTool(args, CreateTool.class));
+    Assert.assertEquals(0, CLITestHelper.runTool(args, CreateTool.class));
   }
 }

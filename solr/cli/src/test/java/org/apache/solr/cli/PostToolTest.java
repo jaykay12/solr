@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package org.apache.solr.cli;
+package java.org.apache.solr.cli;
 
 import java.io.BufferedWriter;
 import java.io.ByteArrayInputStream;

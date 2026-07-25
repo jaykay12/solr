@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.solr.cli;
+package java.org.apache.solr.cli;
 
 import static org.apache.solr.cli.SolrCLI.findTool;
 import static org.apache.solr.cli.SolrCLI.parseCmdLine;
@@ -104,7 +104,7 @@ public class CLITestHelper {
 
     public void clearOutput() {
       if (printer == null) {
-        fail("TestingRuntime was created without capturing output");
+        Assert.fail("TestingRuntime was created without capturing output");
       }
 
       printer.flush();
@@ -114,7 +114,7 @@ public class CLITestHelper {
 
     public String getOutput() {
       if (printer == null) {
-        fail("TestingRuntime was created without capturing output");
+        Assert.fail("TestingRuntime was created without capturing output");
       }
 
       printer.flush();
@@ -124,7 +124,7 @@ public class CLITestHelper {
 
     public Reader getReader() {
       if (printer == null) {
-        fail("TestingRuntime was created without capturing output");
+        Assert.fail("TestingRuntime was created without capturing output");
       }
 
       assert writer != null;
