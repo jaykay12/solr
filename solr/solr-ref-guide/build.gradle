@@ -15,9 +15,9 @@
  * limitations under the License.
  */
 
+
 import groovy.json.JsonOutput
 import javax.inject.Inject
-import org.gradle.process.ExecOperations
 import org.apache.tools.ant.util.TeeOutputStream
 
 apply plugin: 'java'
@@ -693,9 +693,10 @@ String postProcessCliManPage(File rawFile, String asfHeader, String doNotEditNot
 
   // ManPageGenerator renders the command's file-stem as "solr-start" (parent-dash-child) in the
   // Name section. Replace occurrences of that with the correct spaced form "bin/solr start".
-  // Use a negative lookahead (?!-) to avoid replacing "solr-zk" inside xref paths like
-  // "xref:cli/solr-zk-downconfig.adoc" where it is a prefix of a longer command name.
-  content = content.replaceAll("${baseName}(?!-)", newTitle)
+  // Use a negative lookahead (?![-\w]) to avoid replacing "solr-zk" inside xref paths (like
+  // "xref:cli/solr-zk-downconfig.adoc") or within longer hyphenated/alphanumeric names where
+  // it is a prefix of another command or term.
+  content = content.replaceAll("${baseName}(?![-\\w])", newTitle)
 
   // Wrap the synopsis paragraph in a literal block to preserve line breaks and indentation.
   // ManPageGenerator generates a plain paragraph with picocli AsciiDoc marks (*bold*, _italic_)
