@@ -507,7 +507,7 @@ public class PackageTool extends ToolBase {
     return 0;
   }
 
-  private String resolveSolrUrl(String credentials) throws Exception {
+  String resolveSolrUrl(String credentials) throws Exception {
     if (connectionOptions != null) {
       String solrUrl = connectionOptions.effectiveSolrUrl();
       if (solrUrl != null) {
@@ -532,7 +532,7 @@ public class PackageTool extends ToolBase {
     return defaultUrl;
   }
 
-  private String resolveZkHost(String solrUrl, String credentials) throws Exception {
+  String resolveZkHost(String solrUrl, String credentials) throws Exception {
     if (connectionOptions != null) {
       String zkHost = connectionOptions.effectiveZkHost();
       if (zkHost != null) {
