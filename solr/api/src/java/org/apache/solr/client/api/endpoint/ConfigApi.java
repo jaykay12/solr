@@ -73,7 +73,7 @@ public interface ConfigApi {
     // TODO: Keep this regex in sync with GetConfig.MIGRATED_CONFIG_COMPONENTS
     @GET
     @Path(
-        "/{component:updateHandler|directoryFactory|indexConfig|codecFactory|query|searchComponent|queryResponseWriter}")
+        "/{component:updateHandler|directoryFactory|indexConfig|codecFactory|query|searchComponent|queryResponseWriter|luceneMatchVersion|initParams|listener|requestDispatcher|jmx|queryParser|valueSourceParser|transformer|updateProcessor|updateRequestProcessorChain|queryConverter|cache|circuitBreaker|expressible|schemaFactory|restManager|statsCache|recoveryStrategy|indexReaderFactory}")
     @StoreApiParameters
     @Operation(
         summary = "Fetch a config section (with optional component filter)",

@@ -63,7 +63,26 @@ public class GetConfig extends JerseyResource implements ConfigApi.Get {
           "codecFactory",
           "query",
           "searchComponent",
-          "queryResponseWriter");
+          "queryResponseWriter",
+          "luceneMatchVersion",
+          "initParams",
+          "listener",
+          "requestDispatcher",
+          "jmx",
+          "queryParser",
+          "valueSourceParser",
+          "transformer",
+          "updateProcessor",
+          "updateRequestProcessorChain",
+          "queryConverter",
+          "cache",
+          "circuitBreaker",
+          "expressible",
+          "schemaFactory",
+          "restManager",
+          "statsCache",
+          "recoveryStrategy",
+          "indexReaderFactory");
 
   private final SolrQueryRequest solrQueryRequest;
 
