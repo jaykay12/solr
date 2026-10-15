@@ -70,19 +70,34 @@ public interface ConfigApi {
             @Parameter(description = "Expected request-params znode version")
             int expectedParamsVersion);
 
-    // TODO: Keep this regex in sync with GetConfig.MIGRATED_CONFIG_COMPONENTS
+    // TODO: Keep this regex in sync with GetConfig.MIGRATED_CONFIG_COMPONENTS ("searchComponents"
+    // and "queryResponseWriters" here are the external, pluralized names for the internal
+    // "searchComponent"/"queryResponseWriter" sections; see GetConfig#toExternalComponentName)
     @GET
     @Path(
-        "/{component:updateHandler|directoryFactory|indexConfig|codecFactory|query|searchComponent|queryResponseWriter|luceneMatchVersion|initParams|listener|requestDispatcher|jmx|queryParser|valueSourceParser|transformer|updateProcessor|updateRequestProcessorChain|queryConverter|cache|circuitBreaker|expressible|schemaFactory|restManager|statsCache|recoveryStrategy|indexReaderFactory}")
+        "/{component:updateHandler|directoryFactory|indexConfig|codecFactory|query|searchComponents|queryResponseWriters|luceneMatchVersion|initParams|listener|requestDispatcher|jmx|queryParser|valueSourceParser|transformer|updateProcessor|updateRequestProcessorChain|queryConverter|cache|circuitBreaker|expressible|schemaFactory|restManager|statsCache|recoveryStrategy|indexReaderFactory}")
     @StoreApiParameters
     @Operation(
-        summary = "Fetch a config section (with optional component filter)",
+        summary = "Fetch a config section",
         tags = {"config"})
     ConfigInfoResponse getConfigComponent(
         @PathParam("component") @Parameter(description = "Name of the config component")
+            String component);
+
+    // TODO: Keep this regex in sync with GetConfig.MIGRATED_CONFIG_COMPONENTS ("searchComponents"
+    // and "queryResponseWriters" here are the external, pluralized names for the internal
+    // "searchComponent"/"queryResponseWriter" sections; see GetConfig#toExternalComponentName)
+    @GET
+    @Path(
+        "/{component:updateHandler|directoryFactory|indexConfig|codecFactory|query|searchComponents|queryResponseWriters|luceneMatchVersion|initParams|listener|requestDispatcher|jmx|queryParser|valueSourceParser|transformer|updateProcessor|updateRequestProcessorChain|queryConverter|cache|circuitBreaker|expressible|schemaFactory|restManager|statsCache|recoveryStrategy|indexReaderFactory}/{componentName}")
+    @StoreApiParameters
+    @Operation(
+        summary = "Fetch a single named entry within a config section",
+        tags = {"config"})
+    ConfigInfoResponse getConfigComponentByName(
+        @PathParam("component") @Parameter(description = "Name of the config component")
             String component,
-        @QueryParam("componentName")
-            @Parameter(description = "Restrict to a named entry within the section")
+        @PathParam("componentName") @Parameter(description = "Name of the entry within the section")
             String componentName,
         @QueryParam("meta")
             @DefaultValue("false")
