@@ -33,7 +33,7 @@ public class FetchIndexRequestBody {
 
   @JsonProperty public String httpBasicAuthUser;
 
-  @JsonProperty public Integer httpBasicAuthPassword;
+  @JsonProperty public String httpBasicAuthPassword;
 
   /** Blocks until the fetch completes. Intended for tests only. */
   @JsonProperty public Boolean wait;

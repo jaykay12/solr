@@ -500,7 +500,10 @@ public class ReplicationHandler extends RequestHandlerBase
     requestBody.compression = solrParams.get(COMPRESSION);
     requestBody.skipCommitOnLeaderVersionZero =
         solrParams.getBool(SKIP_COMMIT_ON_LEADER_VERSION_ZERO);
-    requestBody.socketTimeout = solrParams.get(SolrHttpConstants.PROP_SO_TIMEOUT);
+    requestBody.socketTimeout = solrParams.getInt(SolrHttpConstants.PROP_SO_TIMEOUT);
+    requestBody.fetchFromLeader = solrParams.getBool(FETCH_FROM_LEADER);
+    requestBody.httpBasicAuthUser = solrParams.get(SolrHttpConstants.PROP_BASIC_AUTH_USER);
+    requestBody.httpBasicAuthPassword = solrParams.get(SolrHttpConstants.PROP_BASIC_AUTH_PASS);
     requestBody.wait = solrParams.getBool(WAIT);
     return requestBody;
   }

@@ -112,7 +112,8 @@ public class CoreReplication extends ReplicationAPIBase implements ReplicationAp
     try {
       return doFetchIndex(requestBody);
     } catch (InterruptedException e) {
-      throw new SolrException(SolrException.ErrorCode.SERVER_ERROR, "Index fetch interruped", e);
+      Thread.currentThread().interrupt();
+      throw new SolrException(SolrException.ErrorCode.SERVER_ERROR, "Index fetch interrupted", e);
     }
   }
 
