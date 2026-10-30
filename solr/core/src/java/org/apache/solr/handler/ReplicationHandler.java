@@ -331,12 +331,12 @@ public class ReplicationHandler extends RequestHandlerBase
             new Exception(restoreStatus.restoreStatus.exception));
       }
     } else if (command.equalsIgnoreCase(CMD_DELETE_BACKUP)) {
-      final ModifiableSolrParams params = new ModifiableSolrParams(solrParams);
+      solrParams.required().get(NAME);
       deleteBackup(
-          params.get(NAME),
-          params.get(BACKUP_LOCATION),
-          params.get(BACKUP_REPOSITORY),
-          params.get(COMMIT_NAME));
+          solrParams.get(NAME),
+          solrParams.get(BACKUP_LOCATION),
+          solrParams.get(BACKUP_REPOSITORY),
+          solrParams.get(COMMIT_NAME));
       rsp.add(STATUS, OK_STATUS);
     } else if (command.equalsIgnoreCase(CMD_FETCH_INDEX)) {
       fetchIndex(solrParams, rsp);
