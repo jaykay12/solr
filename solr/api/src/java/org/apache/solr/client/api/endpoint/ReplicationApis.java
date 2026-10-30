@@ -145,7 +145,8 @@ public interface ReplicationApis {
   @Operation(
       summary = "Force the follower to fetch a copy of the index from its leader.",
       tags = {"replication"})
-  SolrJerseyResponse fetchIndex(@RequestBody FetchIndexRequestBody requestBody) throws InterruptedException;
+  SolrJerseyResponse fetchIndex(@RequestBody FetchIndexRequestBody requestBody)
+      throws InterruptedException;
 
   @PUT
   @Path("/abortfetch")

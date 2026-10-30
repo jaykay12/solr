@@ -335,7 +335,7 @@ public class ReplicationHandler extends RequestHandlerBase
       try {
         fetchIndex(toFetchIndexRequestBody(solrParams));
         rsp.add(STATUS, OK_STATUS);
-      } catch(Exception e) {
+      } catch (Exception e) {
         reportErrorOnResponse(rsp, e.getMessage(), null);
       }
     } else if (command.equalsIgnoreCase(CMD_DISABLE_POLL)) {
@@ -346,7 +346,7 @@ public class ReplicationHandler extends RequestHandlerBase
       try {
         abortFetch();
         rsp.add(STATUS, OK_STATUS);
-      } catch(SolrException e) {
+      } catch (SolrException e) {
         reportErrorOnResponse(rsp, e.getMessage(), null);
       }
     } else if (command.equals(CMD_SHOW_COMMITS)) {
@@ -473,18 +473,21 @@ public class ReplicationHandler extends RequestHandlerBase
     }
     final var fetchArgs = new SimpleOrderedMap<Object>();
     Utils.reflectToMap(requestBody)
-        .forEach((name, value) -> { if (value != null) fetchArgs.add(name, value);});
+        .forEach(
+            (name, value) -> {
+              if (value != null) fetchArgs.add(name, value);
+            });
 
     final IndexFetchResult[] results = new IndexFetchResult[1];
     Thread fetchThread =
-        new Thread(
-            () -> results[0] = doFetch(fetchArgs, false), "explicit-fetchindex-cmd");
+        new Thread(() -> results[0] = doFetch(fetchArgs, false), "explicit-fetchindex-cmd");
     fetchThread.setDaemon(false);
     fetchThread.start();
     if (Boolean.TRUE.equals(requestBody.wait)) {
       fetchThread.join();
       if (results[0] == null) {
-        throw new SolrException(ErrorCode.SERVER_ERROR, "Unable to determine result of synchronous index fetch");
+        throw new SolrException(
+            ErrorCode.SERVER_ERROR, "Unable to determine result of synchronous index fetch");
       } else if (!results[0].getSuccessful()) {
         throw new SolrException(ErrorCode.SERVER_ERROR, results[0].getMessage());
       }
@@ -495,7 +498,8 @@ public class ReplicationHandler extends RequestHandlerBase
     final var requestBody = new FetchIndexRequestBody();
     requestBody.leaderUrl = solrParams.get(LEADER_URL);
     requestBody.compression = solrParams.get(COMPRESSION);
-    requestBody.skipCommitOnLeaderVersionZero = solrParams.getBool(SKIP_COMMIT_ON_LEADER_VERSION_ZERO);
+    requestBody.skipCommitOnLeaderVersionZero =
+        solrParams.getBool(SKIP_COMMIT_ON_LEADER_VERSION_ZERO);
     requestBody.socketTimeout = solrParams.get(SolrHttpConstants.PROP_SO_TIMEOUT);
     requestBody.wait = solrParams.getBool(WAIT);
     return requestBody;

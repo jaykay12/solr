@@ -31,5 +31,4 @@ public class FetchIndexRequestBody {
 
   /** Blocks until the fetch completes. Intended for tests only. */
   @JsonProperty public Boolean wait;
-
 }

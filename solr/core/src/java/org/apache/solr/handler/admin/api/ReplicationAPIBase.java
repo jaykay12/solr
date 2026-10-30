@@ -114,14 +114,17 @@ public abstract class ReplicationAPIBase extends JerseyResource {
     return instantiateJerseyResponse(SolrJerseyResponse.class);
   }
 
-  protected SolrJerseyResponse doFetchIndex(FetchIndexRequestBody requestBody) throws InterruptedException {
-    ReplicationHandler replicationHandler =  (ReplicationHandler) solrCore.getRequestHandler(ReplicationHandler.PATH);
+  protected SolrJerseyResponse doFetchIndex(FetchIndexRequestBody requestBody)
+      throws InterruptedException {
+    ReplicationHandler replicationHandler =
+        (ReplicationHandler) solrCore.getRequestHandler(ReplicationHandler.PATH);
     replicationHandler.fetchIndex(requestBody == null ? new FetchIndexRequestBody() : requestBody);
     return instantiateJerseyResponse(SolrJerseyResponse.class);
   }
 
   protected SolrJerseyResponse doAbortFetch() {
-    ReplicationHandler replicationHandler =  (ReplicationHandler) solrCore.getRequestHandler(ReplicationHandler.PATH);
+    ReplicationHandler replicationHandler =
+        (ReplicationHandler) solrCore.getRequestHandler(ReplicationHandler.PATH);
     replicationHandler.abortFetch();
     return instantiateJerseyResponse(SolrJerseyResponse.class);
   }
