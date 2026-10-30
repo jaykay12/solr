@@ -25,6 +25,7 @@ import io.swagger.v3.oas.annotations.extensions.ExtensionProperty;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import jakarta.ws.rs.DefaultValue;
 import jakarta.ws.rs.GET;
+import jakarta.ws.rs.POST;
 import jakarta.ws.rs.PUT;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -32,6 +33,7 @@ import jakarta.ws.rs.QueryParam;
 import jakarta.ws.rs.core.StreamingOutput;
 import java.io.IOException;
 import org.apache.solr.client.api.model.CommitsResponse;
+import org.apache.solr.client.api.model.FetchIndexRequestBody;
 import org.apache.solr.client.api.model.FileListResponse;
 import org.apache.solr.client.api.model.IndexVersionResponse;
 import org.apache.solr.client.api.model.ReplicationDetailsResponse;
@@ -136,4 +138,20 @@ public interface ReplicationApis {
       tags = {"replication"})
   SolrJerseyResponse setReplicationEnabled(
       @RequestBody(required = true) ReplicationEnabledRequestBody requestBody);
+
+  @POST
+  @Path("/fetchindex")
+  @CoreApiParameters
+  @Operation(
+      summary = "Force the follower to fetch a copy of the index from its leader.",
+      tags = {"replication"})
+  SolrJerseyResponse fetchIndex(@RequestBody FetchIndexRequestBody requestBody);
+
+  @PUT
+  @Path("/abortfetch")
+  @CoreApiParameters
+  @Operation(
+      summary = "Abort an in-progress index fetch from the leader.",
+      tags = {"replication"})
+  SolrJerseyResponse abortFetch();
 }
