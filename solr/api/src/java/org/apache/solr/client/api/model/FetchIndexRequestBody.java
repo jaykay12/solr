@@ -27,7 +27,13 @@ public class FetchIndexRequestBody {
 
   @JsonProperty public Boolean skipCommitOnLeaderVersionZero;
 
-  @JsonProperty public String socketTimeout;
+  @JsonProperty public Integer socketTimeout;
+
+  @JsonProperty public Boolean fetchFromLeader;
+
+  @JsonProperty public String httpBasicAuthUser;
+
+  @JsonProperty public Integer httpBasicAuthPassword;
 
   /** Blocks until the fetch completes. Intended for tests only. */
   @JsonProperty public Boolean wait;

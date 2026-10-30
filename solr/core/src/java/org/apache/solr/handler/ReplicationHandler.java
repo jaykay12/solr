@@ -335,7 +335,7 @@ public class ReplicationHandler extends RequestHandlerBase
       try {
         fetchIndex(toFetchIndexRequestBody(solrParams));
         rsp.add(STATUS, OK_STATUS);
-      } catch (Exception e) {
+      } catch (SolrException e) {
         reportErrorOnResponse(rsp, e.getMessage(), null);
       }
     } else if (command.equalsIgnoreCase(CMD_DISABLE_POLL)) {

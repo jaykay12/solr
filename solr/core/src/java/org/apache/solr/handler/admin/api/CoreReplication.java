@@ -108,9 +108,12 @@ public class CoreReplication extends ReplicationAPIBase implements ReplicationAp
 
   @Override
   @PermissionName(UPDATE_PERM)
-  public SolrJerseyResponse fetchIndex(FetchIndexRequestBody requestBody)
-      throws InterruptedException {
-    return doFetchIndex(requestBody);
+  public SolrJerseyResponse fetchIndex(FetchIndexRequestBody requestBody) {
+    try {
+      return doFetchIndex(requestBody);
+    } catch (InterruptedException e) {
+      throw new SolrException(SolrException.ErrorCode.SERVER_ERROR, "Index fetch interruped", e);
+    }
   }
 
   @Override
