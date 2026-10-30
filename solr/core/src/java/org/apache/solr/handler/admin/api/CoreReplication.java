@@ -18,12 +18,14 @@ package org.apache.solr.handler.admin.api;
 
 import static org.apache.solr.security.PermissionNameProvider.Name.CORE_EDIT_PERM;
 import static org.apache.solr.security.PermissionNameProvider.Name.CORE_READ_PERM;
+import static org.apache.solr.security.PermissionNameProvider.Name.UPDATE_PERM;
 
 import jakarta.inject.Inject;
 import jakarta.ws.rs.core.StreamingOutput;
 import java.io.IOException;
 import org.apache.solr.client.api.endpoint.ReplicationApis;
 import org.apache.solr.client.api.model.CommitsResponse;
+import org.apache.solr.client.api.model.FetchIndexRequestBody;
 import org.apache.solr.client.api.model.FileListResponse;
 import org.apache.solr.client.api.model.IndexVersionResponse;
 import org.apache.solr.client.api.model.ReplicationDetailsResponse;
@@ -102,5 +104,17 @@ public class CoreReplication extends ReplicationAPIBase implements ReplicationAp
   @PermissionName(CORE_EDIT_PERM)
   public SolrJerseyResponse setReplicationEnabled(ReplicationEnabledRequestBody requestBody) {
     return doSetReplicationEnabled(requestBody);
+  }
+
+  @Override
+  @PermissionName(UPDATE_PERM)
+  public SolrJerseyResponse fetchIndex(FetchIndexRequestBody requestBody) throws InterruptedException {
+    return doFetchIndex(requestBody);
+  }
+
+  @Override
+  @PermissionName(UPDATE_PERM)
+  public SolrJerseyResponse abortFetch() {
+    return doAbortFetch();
   }
 }

@@ -77,6 +77,7 @@ import org.apache.solr.api.Api;
 import org.apache.solr.api.JerseyResource;
 import org.apache.solr.client.api.model.CommitsResponse;
 import org.apache.solr.client.api.model.CommitsResponse.CommitDetails;
+import org.apache.solr.client.api.model.FetchIndexRequestBody;
 import org.apache.solr.client.api.model.FileMetaData;
 import org.apache.solr.client.api.model.IndexVersionResponse;
 import org.apache.solr.client.api.model.ReplicationDetailsResponse;
@@ -87,6 +88,7 @@ import org.apache.solr.client.api.model.RestoreStatusResponse;
 import org.apache.solr.client.api.model.RestoreStatusResponse.RestoreState;
 import org.apache.solr.client.api.model.RestoreStatusResponse.RestoreStatus;
 import org.apache.solr.client.api.model.SolrJerseyResponse;
+import org.apache.solr.client.solrj.impl.SolrHttpConstants;
 import org.apache.solr.common.SolrException;
 import org.apache.solr.common.SolrException.ErrorCode;
 import org.apache.solr.common.params.CoreAdminParams;
@@ -98,6 +100,7 @@ import org.apache.solr.common.util.SimpleOrderedMap;
 import org.apache.solr.common.util.SolrNamedThreadFactory;
 import org.apache.solr.common.util.StrUtils;
 import org.apache.solr.common.util.SuppressForbidden;
+import org.apache.solr.common.util.Utils;
 import org.apache.solr.core.CloseHook;
 import org.apache.solr.core.CoreContainer;
 import org.apache.solr.core.DirectoryFactory.DirContext;
@@ -329,16 +332,22 @@ public class ReplicationHandler extends RequestHandlerBase
     } else if (command.equalsIgnoreCase(CMD_DELETE_BACKUP)) {
       deleteSnapshot(new ModifiableSolrParams(solrParams), rsp);
     } else if (command.equalsIgnoreCase(CMD_FETCH_INDEX)) {
-      fetchIndex(solrParams, rsp);
+      try {
+        fetchIndex(toFetchIndexRequestBody(solrParams));
+        rsp.add(STATUS, OK_STATUS);
+      } catch(Exception e) {
+        reportErrorOnResponse(rsp, e.getMessage(), null);
+      }
     } else if (command.equalsIgnoreCase(CMD_DISABLE_POLL)) {
       disablePoll(rsp);
     } else if (command.equalsIgnoreCase(CMD_ENABLE_POLL)) {
       enablePoll(rsp);
     } else if (command.equalsIgnoreCase(CMD_ABORT_FETCH)) {
-      if (abortFetch()) {
+      try {
+        abortFetch();
         rsp.add(STATUS, OK_STATUS);
-      } else {
-        reportErrorOnResponse(rsp, "No follower configured", null);
+      } catch(SolrException e) {
+        reportErrorOnResponse(rsp, e.getMessage(), null);
       }
     } else if (command.equals(CMD_SHOW_COMMITS)) {
       final CoreReplication coreReplicationAPI = new CoreReplication(core, req, rsp);
@@ -409,14 +418,12 @@ public class ReplicationHandler extends RequestHandlerBase
     }
   }
 
-  public boolean abortFetch() {
+  public void abortFetch() {
     IndexFetcher fetcher = currentIndexFetcher;
-    if (fetcher != null) {
-      fetcher.abortFetch();
-      return true;
-    } else {
-      return false;
+    if (fetcher == null) {
+      throw new SolrException(ErrorCode.BAD_REQUEST, "No follower configured");
     }
+    fetcher.abortFetch();
   }
 
   @SuppressWarnings("deprecation")
@@ -459,36 +466,39 @@ public class ReplicationHandler extends RequestHandlerBase
     rsp.add(STATUS, OK_STATUS);
   }
 
-  private void fetchIndex(SolrParams solrParams, SolrQueryResponse rsp)
-      throws InterruptedException {
-    String leaderUrl = solrParams.get(LEADER_URL, null);
-    if (!isFollower && leaderUrl == null) {
-      reportErrorOnResponse(rsp, "No follower configured or no 'leaderUrl' specified", null);
-      return;
+  public void fetchIndex(FetchIndexRequestBody requestBody) throws InterruptedException {
+    if (!isFollower && requestBody.leaderUrl == null) {
+      throw new SolrException(
+          ErrorCode.BAD_REQUEST, "No follower configured or no 'leaderUrl' specified");
     }
-    final SolrParams paramsCopy = new ModifiableSolrParams(solrParams);
+    final var fetchArgs = new SimpleOrderedMap<Object>();
+    Utils.reflectToMap(requestBody)
+        .forEach((name, value) -> { if (value != null) fetchArgs.add(name, value);});
+
     final IndexFetchResult[] results = new IndexFetchResult[1];
     Thread fetchThread =
         new Thread(
-            () -> {
-              IndexFetchResult result = doFetch(paramsCopy, false);
-              results[0] = result;
-            },
-            "explicit-fetchindex-cmd");
+            () -> results[0] = doFetch(fetchArgs, false), "explicit-fetchindex-cmd");
     fetchThread.setDaemon(false);
     fetchThread.start();
-    if (solrParams.getBool(WAIT, false)) {
+    if (Boolean.TRUE.equals(requestBody.wait)) {
       fetchThread.join();
       if (results[0] == null) {
-        reportErrorOnResponse(rsp, "Unable to determine result of synchronous index fetch", null);
-      } else if (results[0].getSuccessful()) {
-        rsp.add(STATUS, OK_STATUS);
-      } else {
-        reportErrorOnResponse(rsp, results[0].getMessage(), null);
+        throw new SolrException(ErrorCode.SERVER_ERROR, "Unable to determine result of synchronous index fetch");
+      } else if (!results[0].getSuccessful()) {
+        throw new SolrException(ErrorCode.SERVER_ERROR, results[0].getMessage());
       }
-    } else {
-      rsp.add(STATUS, OK_STATUS);
     }
+  }
+
+  private static FetchIndexRequestBody toFetchIndexRequestBody(SolrParams solrParams) {
+    final var requestBody = new FetchIndexRequestBody();
+    requestBody.leaderUrl = solrParams.get(LEADER_URL);
+    requestBody.compression = solrParams.get(COMPRESSION);
+    requestBody.skipCommitOnLeaderVersionZero = solrParams.getBool(SKIP_COMMIT_ON_LEADER_VERSION_ZERO);
+    requestBody.socketTimeout = solrParams.get(SolrHttpConstants.PROP_SO_TIMEOUT);
+    requestBody.wait = solrParams.getBool(WAIT);
+    return requestBody;
   }
 
   private List<NamedList<Object>> getCommits() {
@@ -528,11 +538,15 @@ public class ReplicationHandler extends RequestHandlerBase
   private volatile IndexFetcher currentIndexFetcher;
 
   public IndexFetchResult doFetch(SolrParams solrParams, boolean forceReplication) {
+    return doFetch(new SimpleOrderedMap<>(solrParams), forceReplication);
+  }
+
+  public IndexFetchResult doFetch(NamedList<?> fetchArgs, boolean forceReplication) {
     final Span span = TraceUtils.getGlobalTracer().spanBuilder("replication").startSpan();
     TraceUtils.setDbInstance(span, core.getName());
     try (var scope = span.makeCurrent()) {
       assert scope != null; // prevent javac warning about scope being unused
-      IndexFetchResult result = doFetchInternal(solrParams, forceReplication);
+      IndexFetchResult result = doFetchInternal(fetchArgs, forceReplication);
       span.setAttribute("replication.result", result.getMessage());
       if (!result.getSuccessful()) {
         span.setStatus(StatusCode.ERROR);
@@ -548,8 +562,8 @@ public class ReplicationHandler extends RequestHandlerBase
 
   @SuppressWarnings(
       "ReferenceEquality") // detecting the shared pollingIndexFetcher vs. a one-off, by identity
-  private IndexFetchResult doFetchInternal(SolrParams solrParams, boolean forceReplication) {
-    String leaderUrl = solrParams.get(LEADER_URL, null);
+  private IndexFetchResult doFetchInternal(NamedList<?> fetchArgs, boolean forceReplication) {
+    String leaderUrl = (String) fetchArgs.get(LEADER_URL);
     if (!indexFetchLock.tryLock()) return IndexFetchResult.LOCK_OBTAIN_FAILED;
     if (core.getCoreContainer().isShutDown()) {
       log.warn("I was asked to replicate but CoreContainer is shutting down");
@@ -560,7 +574,7 @@ public class ReplicationHandler extends RequestHandlerBase
         if (currentIndexFetcher != null && currentIndexFetcher != pollingIndexFetcher) {
           currentIndexFetcher.destroy();
         }
-        currentIndexFetcher = new IndexFetcher(new SimpleOrderedMap<>(solrParams), this, core);
+        currentIndexFetcher = new IndexFetcher(fetchArgs, this, core);
       } else {
         currentIndexFetcher = pollingIndexFetcher;
       }
