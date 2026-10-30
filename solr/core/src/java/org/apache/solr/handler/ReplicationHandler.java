@@ -548,7 +548,7 @@ public class ReplicationHandler extends RequestHandlerBase
     return doFetch(new SimpleOrderedMap<>(solrParams), forceReplication);
   }
 
-  public IndexFetchResult doFetch(NamedList<?> fetchArgs, boolean forceReplication) {
+  private IndexFetchResult doFetch(NamedList<?> fetchArgs, boolean forceReplication) {
     final Span span = TraceUtils.getGlobalTracer().spanBuilder("replication").startSpan();
     TraceUtils.setDbInstance(span, core.getName());
     try (var scope = span.makeCurrent()) {
