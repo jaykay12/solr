@@ -51,6 +51,7 @@ import org.apache.solr.client.api.model.FileMetaData;
 import org.apache.solr.client.api.model.IndexVersionResponse;
 import org.apache.solr.client.api.model.ReplicationDetailsResponse;
 import org.apache.solr.client.api.model.ReplicationEnabledRequestBody;
+import org.apache.solr.client.api.model.ReplicationRestoreRequestBody;
 import org.apache.solr.client.api.model.RestoreStatusResponse;
 import org.apache.solr.client.api.model.SolrJerseyResponse;
 import org.apache.solr.common.SolrException;
@@ -110,6 +111,16 @@ public abstract class ReplicationAPIBase extends JerseyResource {
     ReplicationHandler replicationHandler =
         (ReplicationHandler) solrCore.getRequestHandler(ReplicationHandler.PATH);
     replicationHandler.setReplicationEnabled(requestBody.enabled);
+    return instantiateJerseyResponse(SolrJerseyResponse.class);
+  }
+
+  protected SolrJerseyResponse doRestoreIndex(ReplicationRestoreRequestBody requestBody)
+      throws IOException {
+    final ReplicationRestoreRequestBody body =
+        requestBody == null ? new ReplicationRestoreRequestBody() : requestBody;
+    ReplicationHandler replicationHandler =
+        (ReplicationHandler) solrCore.getRequestHandler(ReplicationHandler.PATH);
+    replicationHandler.restore(body.name, body.location, body.repository);
     return instantiateJerseyResponse(SolrJerseyResponse.class);
   }
 

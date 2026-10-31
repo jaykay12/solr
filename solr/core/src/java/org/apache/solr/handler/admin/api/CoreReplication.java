@@ -28,6 +28,7 @@ import org.apache.solr.client.api.model.FileListResponse;
 import org.apache.solr.client.api.model.IndexVersionResponse;
 import org.apache.solr.client.api.model.ReplicationDetailsResponse;
 import org.apache.solr.client.api.model.ReplicationEnabledRequestBody;
+import org.apache.solr.client.api.model.ReplicationRestoreRequestBody;
 import org.apache.solr.client.api.model.RestoreStatusResponse;
 import org.apache.solr.client.api.model.SolrJerseyResponse;
 import org.apache.solr.common.SolrException;
@@ -54,6 +55,13 @@ public class CoreReplication extends ReplicationAPIBase implements ReplicationAp
     // Boxed (rather than the primitive boolean used elsewhere for similar flags) so this method
     // can also be called directly, bypassing the JAX-RS @DefaultValue, with no value supplied.
     return doFetchReplicationDetails(follower == null || follower);
+  }
+
+  @Override
+  @PermissionName(CORE_EDIT_PERM)
+  public SolrJerseyResponse restoreIndex(ReplicationRestoreRequestBody requestBody)
+      throws IOException {
+    return doRestoreIndex(requestBody);
   }
 
   @Override
