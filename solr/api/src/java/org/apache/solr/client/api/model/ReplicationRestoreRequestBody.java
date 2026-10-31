@@ -18,6 +18,7 @@ package org.apache.solr.client.api.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+/** Request body for restoring a core's index from a backup taken via the replication handler */
 public class ReplicationRestoreRequestBody {
 
   @JsonProperty public String name;
