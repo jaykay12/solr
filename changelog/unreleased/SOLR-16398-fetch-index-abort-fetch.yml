@@ -1,0 +1,10 @@
+title: >
+  Add V2 JAX-RS API to fetch the index from leader (POST /api/cores/coreName/replication/fetchindex)
+  and to abort an in-progress fetch (PUT /api/cores/coreName/replication/abortfetch)
+type: added
+authors:
+  - name: Jalaz Kumar
+    nick: jaykay12
+links:
+  - name: SOLR-16398
+    url: https://issues.apache.org/jira/browse/SOLR-16398
